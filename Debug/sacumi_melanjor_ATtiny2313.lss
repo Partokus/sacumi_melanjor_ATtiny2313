@@ -1,0 +1,222 @@
+
+sacumi_melanjor_ATtiny2313.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         0000011e  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  00800060  00000192  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .bss          00000009  00800060  00800060  00000192  2**0
+                  ALLOC
+  3 .comment      00000030  00000000  00000000  00000192  2**0
+                  CONTENTS, READONLY
+  4 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  000001c4  2**2
+                  CONTENTS, READONLY
+  5 .debug_aranges 00000038  00000000  00000000  00000204  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_info   0000057d  00000000  00000000  0000023c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_abbrev 000004bd  00000000  00000000  000007b9  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_line   00000265  00000000  00000000  00000c76  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_frame  00000074  00000000  00000000  00000edc  2**2
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_str    0000033e  00000000  00000000  00000f50  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_loc    00000063  00000000  00000000  0000128e  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 12 .debug_ranges 00000028  00000000  00000000  000012f1  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	14 c0       	rjmp	.+40     	; 0x2a <__ctors_end>
+   2:	21 c0       	rjmp	.+66     	; 0x46 <__bad_interrupt>
+   4:	20 c0       	rjmp	.+64     	; 0x46 <__bad_interrupt>
+   6:	1f c0       	rjmp	.+62     	; 0x46 <__bad_interrupt>
+   8:	1e c0       	rjmp	.+60     	; 0x46 <__bad_interrupt>
+   a:	1d c0       	rjmp	.+58     	; 0x46 <__bad_interrupt>
+   c:	1c c0       	rjmp	.+56     	; 0x46 <__bad_interrupt>
+   e:	1b c0       	rjmp	.+54     	; 0x46 <__bad_interrupt>
+  10:	1a c0       	rjmp	.+52     	; 0x46 <__bad_interrupt>
+  12:	19 c0       	rjmp	.+50     	; 0x46 <__bad_interrupt>
+  14:	18 c0       	rjmp	.+48     	; 0x46 <__bad_interrupt>
+  16:	17 c0       	rjmp	.+46     	; 0x46 <__bad_interrupt>
+  18:	16 c0       	rjmp	.+44     	; 0x46 <__bad_interrupt>
+  1a:	5a c0       	rjmp	.+180    	; 0xd0 <__vector_13>
+  1c:	14 c0       	rjmp	.+40     	; 0x46 <__bad_interrupt>
+  1e:	13 c0       	rjmp	.+38     	; 0x46 <__bad_interrupt>
+  20:	12 c0       	rjmp	.+36     	; 0x46 <__bad_interrupt>
+  22:	11 c0       	rjmp	.+34     	; 0x46 <__bad_interrupt>
+  24:	10 c0       	rjmp	.+32     	; 0x46 <__bad_interrupt>
+  26:	0f c0       	rjmp	.+30     	; 0x46 <__bad_interrupt>
+  28:	0e c0       	rjmp	.+28     	; 0x46 <__bad_interrupt>
+
+0000002a <__ctors_end>:
+  2a:	11 24       	eor	r1, r1
+  2c:	1f be       	out	0x3f, r1	; 63
+  2e:	cf ed       	ldi	r28, 0xDF	; 223
+  30:	cd bf       	out	0x3d, r28	; 61
+
+00000032 <__do_clear_bss>:
+  32:	20 e0       	ldi	r18, 0x00	; 0
+  34:	a0 e6       	ldi	r26, 0x60	; 96
+  36:	b0 e0       	ldi	r27, 0x00	; 0
+  38:	01 c0       	rjmp	.+2      	; 0x3c <.do_clear_bss_start>
+
+0000003a <.do_clear_bss_loop>:
+  3a:	1d 92       	st	X+, r1
+
+0000003c <.do_clear_bss_start>:
+  3c:	a9 36       	cpi	r26, 0x69	; 105
+  3e:	b2 07       	cpc	r27, r18
+  40:	e1 f7       	brne	.-8      	; 0x3a <.do_clear_bss_loop>
+  42:	12 d0       	rcall	.+36     	; 0x68 <main>
+  44:	6a c0       	rjmp	.+212    	; 0x11a <_exit>
+
+00000046 <__bad_interrupt>:
+  46:	dc cf       	rjmp	.-72     	; 0x0 <__vectors>
+
+00000048 <init_port>:
+
+void init_port()
+{
+	// board led pin
+
+	DDRD = 1 << pin_board_led;
+  48:	81 e0       	ldi	r24, 0x01	; 1
+  4a:	81 bb       	out	0x11, r24	; 17
+
+	PORTD = 1 << pin_board_led;
+  4c:	82 bb       	out	0x12, r24	; 18
+	board_led_status = true;
+  4e:	80 93 68 00 	sts	0x0068, r24	; 0x800068 <board_led_status>
+  52:	08 95       	ret
+
+00000054 <init_timers>:
+	
+}
+
+void init_timers()
+{
+	TCCR0A = 1 << WGM01; // compare mode
+  54:	82 e0       	ldi	r24, 0x02	; 2
+  56:	80 bf       	out	0x30, r24	; 48
+	TCCR0B = 1 << CS01 | 1 << CS00; // 64 prescaler
+  58:	83 e0       	ldi	r24, 0x03	; 3
+  5a:	83 bf       	out	0x33, r24	; 51
+	OCR0A = 62; // 1 ms period
+  5c:	8e e3       	ldi	r24, 0x3E	; 62
+  5e:	86 bf       	out	0x36, r24	; 54
+	TIMSK = 1 << OCIE0A; // timer compare interrupt enable
+  60:	81 e0       	ldi	r24, 0x01	; 1
+  62:	89 bf       	out	0x39, r24	; 57
+	TIFR = 1 << OCF0A;
+  64:	88 bf       	out	0x38, r24	; 56
+  66:	08 95       	ret
+
+00000068 <main>:
+#include <avr/interrupt.h>
+#include "sacumi_melanjor_ATtiny2313.h"
+
+int main(void)
+{
+	init_port();
+  68:	ef df       	rcall	.-34     	; 0x48 <init_port>
+	init_timers();
+  6a:	f4 df       	rcall	.-24     	; 0x54 <init_timers>
+	sei();
+  6c:	78 94       	sei
+	
+    while (1) 
+    {
+		if (time_board_led < time_ms)
+  6e:	40 91 60 00 	lds	r20, 0x0060	; 0x800060 <__DATA_REGION_ORIGIN__>
+  72:	50 91 61 00 	lds	r21, 0x0061	; 0x800061 <__DATA_REGION_ORIGIN__+0x1>
+  76:	60 91 62 00 	lds	r22, 0x0062	; 0x800062 <__DATA_REGION_ORIGIN__+0x2>
+  7a:	70 91 63 00 	lds	r23, 0x0063	; 0x800063 <__DATA_REGION_ORIGIN__+0x3>
+  7e:	80 91 64 00 	lds	r24, 0x0064	; 0x800064 <time_ms>
+  82:	90 91 65 00 	lds	r25, 0x0065	; 0x800065 <time_ms+0x1>
+  86:	a0 91 66 00 	lds	r26, 0x0066	; 0x800066 <time_ms+0x2>
+  8a:	b0 91 67 00 	lds	r27, 0x0067	; 0x800067 <time_ms+0x3>
+  8e:	48 17       	cp	r20, r24
+  90:	59 07       	cpc	r21, r25
+  92:	6a 07       	cpc	r22, r26
+  94:	7b 07       	cpc	r23, r27
+  96:	58 f7       	brcc	.-42     	; 0x6e <main+0x6>
+		{
+			time_board_led = time_ms + 1000;
+  98:	88 51       	subi	r24, 0x18	; 24
+  9a:	9c 4f       	sbci	r25, 0xFC	; 252
+  9c:	af 4f       	sbci	r26, 0xFF	; 255
+  9e:	bf 4f       	sbci	r27, 0xFF	; 255
+  a0:	80 93 60 00 	sts	0x0060, r24	; 0x800060 <__DATA_REGION_ORIGIN__>
+  a4:	90 93 61 00 	sts	0x0061, r25	; 0x800061 <__DATA_REGION_ORIGIN__+0x1>
+  a8:	a0 93 62 00 	sts	0x0062, r26	; 0x800062 <__DATA_REGION_ORIGIN__+0x2>
+  ac:	b0 93 63 00 	sts	0x0063, r27	; 0x800063 <__DATA_REGION_ORIGIN__+0x3>
+			
+			board_led_status = !board_led_status;
+  b0:	90 91 68 00 	lds	r25, 0x0068	; 0x800068 <board_led_status>
+  b4:	81 e0       	ldi	r24, 0x01	; 1
+  b6:	89 27       	eor	r24, r25
+  b8:	80 93 68 00 	sts	0x0068, r24	; 0x800068 <board_led_status>
+			if (board_led_status) PORTD |= 1 << pin_board_led;
+  bc:	88 23       	and	r24, r24
+  be:	21 f0       	breq	.+8      	; 0xc8 <__DATA_REGION_LENGTH__+0x48>
+  c0:	82 b3       	in	r24, 0x12	; 18
+  c2:	81 60       	ori	r24, 0x01	; 1
+  c4:	82 bb       	out	0x12, r24	; 18
+  c6:	d3 cf       	rjmp	.-90     	; 0x6e <main+0x6>
+			else PORTD &= ~(1 << pin_board_led);
+  c8:	82 b3       	in	r24, 0x12	; 18
+  ca:	8e 7f       	andi	r24, 0xFE	; 254
+  cc:	82 bb       	out	0x12, r24	; 18
+  ce:	cf cf       	rjmp	.-98     	; 0x6e <main+0x6>
+
+000000d0 <__vector_13>:
+	TIMSK = 1 << OCIE0A; // timer compare interrupt enable
+	TIFR = 1 << OCF0A;
+}
+
+ISR(TIMER0_COMPA_vect)
+{
+  d0:	1f 92       	push	r1
+  d2:	0f 92       	push	r0
+  d4:	0f b6       	in	r0, 0x3f	; 63
+  d6:	0f 92       	push	r0
+  d8:	11 24       	eor	r1, r1
+  da:	8f 93       	push	r24
+  dc:	9f 93       	push	r25
+  de:	af 93       	push	r26
+  e0:	bf 93       	push	r27
+	time_ms++;
+  e2:	80 91 64 00 	lds	r24, 0x0064	; 0x800064 <time_ms>
+  e6:	90 91 65 00 	lds	r25, 0x0065	; 0x800065 <time_ms+0x1>
+  ea:	a0 91 66 00 	lds	r26, 0x0066	; 0x800066 <time_ms+0x2>
+  ee:	b0 91 67 00 	lds	r27, 0x0067	; 0x800067 <time_ms+0x3>
+  f2:	01 96       	adiw	r24, 0x01	; 1
+  f4:	a1 1d       	adc	r26, r1
+  f6:	b1 1d       	adc	r27, r1
+  f8:	80 93 64 00 	sts	0x0064, r24	; 0x800064 <time_ms>
+  fc:	90 93 65 00 	sts	0x0065, r25	; 0x800065 <time_ms+0x1>
+ 100:	a0 93 66 00 	sts	0x0066, r26	; 0x800066 <time_ms+0x2>
+ 104:	b0 93 67 00 	sts	0x0067, r27	; 0x800067 <time_ms+0x3>
+}
+ 108:	bf 91       	pop	r27
+ 10a:	af 91       	pop	r26
+ 10c:	9f 91       	pop	r25
+ 10e:	8f 91       	pop	r24
+ 110:	0f 90       	pop	r0
+ 112:	0f be       	out	0x3f, r0	; 63
+ 114:	0f 90       	pop	r0
+ 116:	1f 90       	pop	r1
+ 118:	18 95       	reti
+
+0000011a <_exit>:
+ 11a:	f8 94       	cli
+
+0000011c <__stop_program>:
+ 11c:	ff cf       	rjmp	.-2      	; 0x11c <__stop_program>
