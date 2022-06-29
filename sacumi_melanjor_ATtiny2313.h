@@ -28,8 +28,8 @@ void proccess_status(uint8_t button_t);
 // config
 #define buttons_debounce_time 15
 #define buttons_interference_time 100
-#define motion_reverse_blink_period 1000
-#define motion_mix_blink_period 500
+#define motion_reverse_blink_period 700
+#define motion_mix_blink_period 350
 #define motion_mix_time 60000
 #define motion_mix_period 3000 
 

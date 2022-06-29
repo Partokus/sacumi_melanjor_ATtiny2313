@@ -564,8 +564,8 @@ void proccess_status(uint8_t button_t)
  38c:	90 91 bf 00 	lds	r25, 0x00BF	; 0x8000bf <time_ms+0x1>
  390:	a0 91 c0 00 	lds	r26, 0x00C0	; 0x8000c0 <time_ms+0x2>
  394:	b0 91 c1 00 	lds	r27, 0x00C1	; 0x8000c1 <time_ms+0x3>
- 398:	88 51       	subi	r24, 0x18	; 24
- 39a:	9c 4f       	sbci	r25, 0xFC	; 252
+ 398:	84 54       	subi	r24, 0x44	; 68
+ 39a:	9d 4f       	sbci	r25, 0xFD	; 253
  39c:	af 4f       	sbci	r26, 0xFF	; 255
  39e:	bf 4f       	sbci	r27, 0xFF	; 255
  3a0:	80 93 b6 00 	sts	0x00B6, r24	; 0x8000b6 <time_counter_motion_reverse>
@@ -603,7 +603,7 @@ void proccess_status(uint8_t button_t)
  3ee:	90 91 bf 00 	lds	r25, 0x00BF	; 0x8000bf <time_ms+0x1>
  3f2:	a0 91 c0 00 	lds	r26, 0x00C0	; 0x8000c0 <time_ms+0x2>
  3f6:	b0 91 c1 00 	lds	r27, 0x00C1	; 0x8000c1 <time_ms+0x3>
- 3fa:	8c 50       	subi	r24, 0x0C	; 12
+ 3fa:	82 5a       	subi	r24, 0xA2	; 162
  3fc:	9e 4f       	sbci	r25, 0xFE	; 254
  3fe:	af 4f       	sbci	r26, 0xFF	; 255
  400:	bf 4f       	sbci	r27, 0xFF	; 255
@@ -660,7 +660,7 @@ void proccess_status(uint8_t button_t)
  44e:	90 91 bf 00 	lds	r25, 0x00BF	; 0x8000bf <time_ms+0x1>
  452:	a0 91 c0 00 	lds	r26, 0x00C0	; 0x8000c0 <time_ms+0x2>
  456:	b0 91 c1 00 	lds	r27, 0x00C1	; 0x8000c1 <time_ms+0x3>
- 45a:	8c 50       	subi	r24, 0x0C	; 12
+ 45a:	82 5a       	subi	r24, 0xA2	; 162
  45c:	9e 4f       	sbci	r25, 0xFE	; 254
  45e:	af 4f       	sbci	r26, 0xFF	; 255
  460:	bf 4f       	sbci	r27, 0xFF	; 255
@@ -710,7 +710,7 @@ void proccess_status(uint8_t button_t)
  4a4:	90 91 bf 00 	lds	r25, 0x00BF	; 0x8000bf <time_ms+0x1>
  4a8:	a0 91 c0 00 	lds	r26, 0x00C0	; 0x8000c0 <time_ms+0x2>
  4ac:	b0 91 c1 00 	lds	r27, 0x00C1	; 0x8000c1 <time_ms+0x3>
- 4b0:	8c 50       	subi	r24, 0x0C	; 12
+ 4b0:	82 5a       	subi	r24, 0xA2	; 162
  4b2:	9e 4f       	sbci	r25, 0xFE	; 254
  4b4:	af 4f       	sbci	r26, 0xFF	; 255
  4b6:	bf 4f       	sbci	r27, 0xFF	; 255
@@ -881,8 +881,8 @@ int main(void)
  598:	98 f4       	brcc	.+38     	; 0x5c0 <main+0xb0>
 		{
 			time_counter_motion_reverse = time_ms + motion_reverse_blink_period;
- 59a:	88 51       	subi	r24, 0x18	; 24
- 59c:	9c 4f       	sbci	r25, 0xFC	; 252
+ 59a:	84 54       	subi	r24, 0x44	; 68
+ 59c:	9d 4f       	sbci	r25, 0xFD	; 253
  59e:	af 4f       	sbci	r26, 0xFF	; 255
  5a0:	bf 4f       	sbci	r27, 0xFF	; 255
  5a2:	80 93 b6 00 	sts	0x00B6, r24	; 0x8000b6 <time_counter_motion_reverse>
@@ -921,7 +921,7 @@ int main(void)
  5f4:	90 cf       	rjmp	.-224    	; 0x516 <main+0x6>
 		{
 			time_counter_motion_mix = time_ms + motion_mix_blink_period;
- 5f6:	8c 50       	subi	r24, 0x0C	; 12
+ 5f6:	82 5a       	subi	r24, 0xA2	; 162
  5f8:	9e 4f       	sbci	r25, 0xFE	; 254
  5fa:	af 4f       	sbci	r26, 0xFF	; 255
  5fc:	bf 4f       	sbci	r27, 0xFF	; 255
