@@ -14,6 +14,13 @@ Discarded input sections
  .text          0x00000000        0x0 main.o
  .data          0x00000000        0x0 main.o
  .bss           0x00000000        0x0 main.o
+ .text.button_on_off_callback
+                0x00000000       0x20 main.o
+ .bss.test_timer1
+                0x00000000        0x4 main.o
+ .bss.time_counter_board_led_blink
+                0x00000000        0x4 main.o
+ .avr.prop      0x00000000       0x16 main.o
  .text          0x00000000        0x0 e:/programms/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr25/tiny-stack\libgcc.a(_exit.o)
  .data          0x00000000        0x0 e:/programms/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr25/tiny-stack\libgcc.a(_exit.o)
  .bss           0x00000000        0x0 e:/programms/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr25/tiny-stack\libgcc.a(_exit.o)
@@ -188,51 +195,53 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000      0x2e2
+.text           0x00000000      0x65e
  *(.vectors)
  .vectors       0x00000000       0x2a E:/Programms/Atmel/Studio/7.0/Packs/atmel/ATtiny_DFP/1.8.332/gcc/dev/attiny2313a/avr25/tiny-stack/crtattiny2313a.o
                 0x00000000                __vector_default
                 0x00000000                __vectors
  *(.vectors)
  *(.progmem.gcc*)
-                0x0000002a                . = ALIGN (0x2)
-                0x0000002a                __trampolines_start = .
+ .progmem.gcc_sw_table.button_tick
+                0x0000002a        0xe main.o
+                0x00000038                . = ALIGN (0x2)
+                0x00000038                __trampolines_start = .
  *(.trampolines)
- .trampolines   0x0000002a        0x0 linker stubs
+ .trampolines   0x00000038        0x0 linker stubs
  *(.trampolines*)
-                0x0000002a                __trampolines_end = .
+                0x00000038                __trampolines_end = .
  *libprintf_flt.a:*(.progmem.data)
  *libc.a:*(.progmem.data)
  *(.progmem*)
-                0x0000002a                . = ALIGN (0x2)
+                0x00000038                . = ALIGN (0x2)
  *(.jumptables)
  *(.jumptables*)
  *(.lowtext)
  *(.lowtext*)
-                0x0000002a                __ctors_start = .
+                0x00000038                __ctors_start = .
  *(.ctors)
-                0x0000002a                __ctors_end = .
-                0x0000002a                __dtors_start = .
+                0x00000038                __ctors_end = .
+                0x00000038                __dtors_start = .
  *(.dtors)
-                0x0000002a                __dtors_end = .
+                0x00000038                __dtors_end = .
  SORT(*)(.ctors)
  SORT(*)(.dtors)
  *(.init0)
- .init0         0x0000002a        0x0 E:/Programms/Atmel/Studio/7.0/Packs/atmel/ATtiny_DFP/1.8.332/gcc/dev/attiny2313a/avr25/tiny-stack/crtattiny2313a.o
-                0x0000002a                __init
+ .init0         0x00000038        0x0 E:/Programms/Atmel/Studio/7.0/Packs/atmel/ATtiny_DFP/1.8.332/gcc/dev/attiny2313a/avr25/tiny-stack/crtattiny2313a.o
+                0x00000038                __init
  *(.init0)
  *(.init1)
  *(.init1)
  *(.init2)
- .init2         0x0000002a        0x8 E:/Programms/Atmel/Studio/7.0/Packs/atmel/ATtiny_DFP/1.8.332/gcc/dev/attiny2313a/avr25/tiny-stack/crtattiny2313a.o
+ .init2         0x00000038        0x8 E:/Programms/Atmel/Studio/7.0/Packs/atmel/ATtiny_DFP/1.8.332/gcc/dev/attiny2313a/avr25/tiny-stack/crtattiny2313a.o
  *(.init2)
  *(.init3)
  *(.init3)
  *(.init4)
- .init4         0x00000032       0x16 e:/programms/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr25/tiny-stack\libgcc.a(_copy_data.o)
-                0x00000032                __do_copy_data
- .init4         0x00000048       0x10 e:/programms/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr25/tiny-stack\libgcc.a(_clear_bss.o)
-                0x00000048                __do_clear_bss
+ .init4         0x00000040       0x16 e:/programms/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr25/tiny-stack\libgcc.a(_copy_data.o)
+                0x00000040                __do_copy_data
+ .init4         0x00000056       0x10 e:/programms/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr25/tiny-stack\libgcc.a(_clear_bss.o)
+                0x00000056                __do_clear_bss
  *(.init4)
  *(.init5)
  *(.init5)
@@ -243,54 +252,87 @@ END GROUP
  *(.init8)
  *(.init8)
  *(.init9)
- .init9         0x00000058        0x4 E:/Programms/Atmel/Studio/7.0/Packs/atmel/ATtiny_DFP/1.8.332/gcc/dev/attiny2313a/avr25/tiny-stack/crtattiny2313a.o
+ .init9         0x00000066        0x4 E:/Programms/Atmel/Studio/7.0/Packs/atmel/ATtiny_DFP/1.8.332/gcc/dev/attiny2313a/avr25/tiny-stack/crtattiny2313a.o
  *(.init9)
  *(.text)
- .text          0x0000005c        0x2 E:/Programms/Atmel/Studio/7.0/Packs/atmel/ATtiny_DFP/1.8.332/gcc/dev/attiny2313a/avr25/tiny-stack/crtattiny2313a.o
-                0x0000005c                __vector_1
-                0x0000005c                __vector_12
-                0x0000005c                __bad_interrupt
-                0x0000005c                __vector_6
-                0x0000005c                __vector_3
-                0x0000005c                __vector_11
-                0x0000005c                __vector_17
-                0x0000005c                __vector_19
-                0x0000005c                __vector_7
-                0x0000005c                __vector_5
-                0x0000005c                __vector_4
-                0x0000005c                __vector_9
-                0x0000005c                __vector_2
-                0x0000005c                __vector_15
-                0x0000005c                __vector_8
-                0x0000005c                __vector_14
-                0x0000005c                __vector_10
-                0x0000005c                __vector_16
-                0x0000005c                __vector_18
-                0x0000005c                __vector_20
-                0x0000005e                . = ALIGN (0x2)
+ .text          0x0000006a        0x2 E:/Programms/Atmel/Studio/7.0/Packs/atmel/ATtiny_DFP/1.8.332/gcc/dev/attiny2313a/avr25/tiny-stack/crtattiny2313a.o
+                0x0000006a                __vector_1
+                0x0000006a                __vector_12
+                0x0000006a                __bad_interrupt
+                0x0000006a                __vector_6
+                0x0000006a                __vector_3
+                0x0000006a                __vector_11
+                0x0000006a                __vector_17
+                0x0000006a                __vector_19
+                0x0000006a                __vector_7
+                0x0000006a                __vector_5
+                0x0000006a                __vector_4
+                0x0000006a                __vector_9
+                0x0000006a                __vector_2
+                0x0000006a                __vector_15
+                0x0000006a                __vector_8
+                0x0000006a                __vector_14
+                0x0000006a                __vector_10
+                0x0000006a                __vector_16
+                0x0000006a                __vector_18
+                0x0000006a                __vector_20
+                0x0000006c                . = ALIGN (0x2)
  *(.text.*)
- .text.button_on_off_callback
-                0x0000005e       0x20 main.o
-                0x0000005e                button_on_off_callback
+ .text.null_function
+                0x0000006c        0x2 main.o
+                0x0000006c                null_function
  .text.init_port
-                0x0000007e       0x1a main.o
-                0x0000007e                init_port
+                0x0000006e       0x34 main.o
+                0x0000006e                init_port
  .text.init_timers
-                0x00000098       0x14 main.o
-                0x00000098                init_timers
+                0x000000a2       0x14 main.o
+                0x000000a2                init_timers
  .text.__vector_13
-                0x000000ac       0x4a main.o
-                0x000000ac                __vector_13
+                0x000000b6       0x4a main.o
+                0x000000b6                __vector_13
  .text.button_tick
-                0x000000f6      0x158 main.o
-                0x000000f6                button_tick
- .text.main     0x0000024e       0x90 main.o
-                0x0000024e                main
-                0x000002de                . = ALIGN (0x2)
+                0x00000100      0x1d8 main.o
+                0x00000100                button_tick
+ .text.motion_forward
+                0x000002d8       0x1a main.o
+                0x000002d8                motion_forward
+ .text.motion_reverse
+                0x000002f2       0x14 main.o
+                0x000002f2                motion_reverse
+ .text.motion_off
+                0x00000306       0x18 main.o
+                0x00000306                motion_off
+ .text.reset_led_on
+                0x0000031e        0xe main.o
+                0x0000031e                reset_led_on
+ .text.reset_led_off
+                0x0000032c        0xc main.o
+                0x0000032c                reset_led_off
+ .text.proccess_status
+                0x00000338      0x1ba main.o
+                0x00000338                proccess_status
+ .text.button_on_off_single_click_callback
+                0x000004f2        0x6 main.o
+                0x000004f2                button_on_off_single_click_callback
+ .text.button_reset_single_click_callback
+                0x000004f8        0x6 main.o
+                0x000004f8                button_reset_single_click_callback
+ .text.button_reset_long_press_click_callback
+                0x000004fe        0x6 main.o
+                0x000004fe                button_reset_long_press_click_callback
+ .text.button_red_long_press_click_callback
+                0x00000504        0x6 main.o
+                0x00000504                button_red_long_press_click_callback
+ .text.button_red_long_release_click_callback
+                0x0000050a        0x6 main.o
+                0x0000050a                button_red_long_release_click_callback
+ .text.main     0x00000510      0x14a main.o
+                0x00000510                main
+                0x0000065a                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x000002de        0x0 e:/programms/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr25/tiny-stack\libgcc.a(_exit.o)
-                0x000002de                _exit
-                0x000002de                exit
+ .fini9         0x0000065a        0x0 e:/programms/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr25/tiny-stack\libgcc.a(_exit.o)
+                0x0000065a                _exit
+                0x0000065a                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -309,57 +351,83 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x000002de        0x4 e:/programms/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr25/tiny-stack\libgcc.a(_exit.o)
+ .fini0         0x0000065a        0x4 e:/programms/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr25/tiny-stack\libgcc.a(_exit.o)
  *(.fini0)
-                0x000002e2                _etext = .
+                0x0000065e                _etext = .
 
-.data           0x00800060       0x2e load address 0x000002e2
+.data           0x00800060       0x4a load address 0x0000065e
                 0x00800060                PROVIDE (__data_start, .)
  *(.data)
  *(.data*)
  .data.button_red
-                0x00800060        0xf main.o
+                0x00800060       0x18 main.o
                 0x00800060                button_red
  .data.button_reset
-                0x0080006f        0xf main.o
-                0x0080006f                button_reset
+                0x00800078       0x18 main.o
+                0x00800078                button_reset
  .data.button_on_off
-                0x0080007e        0xf main.o
-                0x0080007e                button_on_off
+                0x00800090       0x18 main.o
+                0x00800090                button_on_off
+ .data.motion_mix_time_var
+                0x008000a8        0x1 main.o
+                0x008000a8                motion_mix_time_var
+ .data.motion_mix_period_var
+                0x008000a9        0x1 main.o
+                0x008000a9                motion_mix_period_var
  *(.gnu.linkonce.d*)
  *(.rodata)
  *(.rodata*)
  *(.gnu.linkonce.r*)
-                0x0080008e                . = ALIGN (0x2)
- *fill*         0x0080008d        0x1 
-                0x0080008e                _edata = .
-                0x0080008e                PROVIDE (__data_end, .)
+                0x008000aa                . = ALIGN (0x2)
+                0x008000aa                _edata = .
+                0x008000aa                PROVIDE (__data_end, .)
 
-.bss            0x0080008e        0xd
-                0x0080008e                PROVIDE (__bss_start, .)
+.bss            0x008000aa       0x1a
+                0x008000aa                PROVIDE (__bss_start, .)
  *(.bss)
  *(.bss*)
+ .bss.test_timer2
+                0x008000aa        0x4 main.o
+                0x008000aa                test_timer2
+ .bss.motion_mix_time_counter
+                0x008000ae        0x1 main.o
+                0x008000ae                motion_mix_time_counter
+ .bss.motion_mix_period_counter
+                0x008000af        0x1 main.o
+                0x008000af                motion_mix_period_counter
+ .bss.reset_led_status
+                0x008000b0        0x1 main.o
+                0x008000b0                reset_led_status
+ .bss.motion_status
+                0x008000b1        0x1 main.o
+                0x008000b1                motion_status
+ .bss.time_counter_motion_mix
+                0x008000b2        0x4 main.o
+                0x008000b2                time_counter_motion_mix
+ .bss.time_counter_motion_reverse
+                0x008000b6        0x4 main.o
+                0x008000b6                time_counter_motion_reverse
  .bss.time_counter_buttons
-                0x0080008e        0x4 main.o
-                0x0080008e                time_counter_buttons
- .bss.time_counter_board_led_blink
-                0x00800092        0x4 main.o
-                0x00800092                time_counter_board_led_blink
- .bss.time_ms   0x00800096        0x4 main.o
-                0x00800096                time_ms
+                0x008000ba        0x4 main.o
+                0x008000ba                time_counter_buttons
+ .bss.time_ms   0x008000be        0x4 main.o
+                0x008000be                time_ms
  .bss.board_led_status
-                0x0080009a        0x1 main.o
-                0x0080009a                board_led_status
+                0x008000c2        0x1 main.o
+                0x008000c2                board_led_status
+ .bss.main_status
+                0x008000c3        0x1 main.o
+                0x008000c3                main_status
  *(COMMON)
-                0x0080009b                PROVIDE (__bss_end, .)
-                0x000002e2                __data_load_start = LOADADDR (.data)
-                0x00000310                __data_load_end = (__data_load_start + SIZEOF (.data))
+                0x008000c4                PROVIDE (__bss_end, .)
+                0x0000065e                __data_load_start = LOADADDR (.data)
+                0x000006a8                __data_load_end = (__data_load_start + SIZEOF (.data))
 
-.noinit         0x0080009b        0x0
+.noinit         0x008000c4        0x0
                 [!provide]                PROVIDE (__noinit_start, .)
  *(.noinit*)
                 [!provide]                PROVIDE (__noinit_end, .)
-                0x0080009b                _end = .
+                0x008000c4                _end = .
                 [!provide]                PROVIDE (__heap_start, .)
 
 .eeprom         0x00810000        0x0
@@ -424,42 +492,42 @@ END GROUP
 .debug_sfnames
  *(.debug_sfnames)
 
-.debug_aranges  0x00000000       0x48
+.debug_aranges  0x00000000       0xa8
  *(.debug_aranges)
  .debug_aranges
-                0x00000000       0x48 main.o
+                0x00000000       0xa8 main.o
 
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000      0x752
+.debug_info     0x00000000      0xb52
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000      0x456 E:/Programms/Atmel/Studio/7.0/Packs/atmel/ATtiny_DFP/1.8.332/gcc/dev/attiny2313a/avr25/tiny-stack/crtattiny2313a.o
- .debug_info    0x00000456      0x2fc main.o
+ .debug_info    0x00000456      0x6fc main.o
 
-.debug_abbrev   0x00000000      0x577
+.debug_abbrev   0x00000000      0x5bf
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0x41b E:/Programms/Atmel/Studio/7.0/Packs/atmel/ATtiny_DFP/1.8.332/gcc/dev/attiny2313a/avr25/tiny-stack/crtattiny2313a.o
- .debug_abbrev  0x0000041b      0x15c main.o
+ .debug_abbrev  0x0000041b      0x1a4 main.o
 
-.debug_line     0x00000000      0x37e
+.debug_line     0x00000000      0x729
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000      0x10c E:/Programms/Atmel/Studio/7.0/Packs/atmel/ATtiny_DFP/1.8.332/gcc/dev/attiny2313a/avr25/tiny-stack/crtattiny2313a.o
- .debug_line    0x0000010c      0x272 main.o
+ .debug_line    0x0000010c      0x61d main.o
 
-.debug_frame    0x00000000       0xb4
+.debug_frame    0x00000000      0x17c
  *(.debug_frame)
- .debug_frame   0x00000000       0xb4 main.o
+ .debug_frame   0x00000000      0x17c main.o
 
-.debug_str      0x00000000      0x4a3
+.debug_str      0x00000000      0x80c
  *(.debug_str)
  .debug_str     0x00000000      0x17b E:/Programms/Atmel/Studio/7.0/Packs/atmel/ATtiny_DFP/1.8.332/gcc/dev/attiny2313a/avr25/tiny-stack/crtattiny2313a.o
- .debug_str     0x0000017b      0x328 main.o
-                                0x374 (size before relaxing)
+ .debug_str     0x0000017b      0x691 main.o
+                                0x714 (size before relaxing)
 
-.debug_loc      0x00000000      0x1a8
+.debug_loc      0x00000000      0x34c
  *(.debug_loc)
- .debug_loc     0x00000000      0x1a8 main.o
+ .debug_loc     0x00000000      0x34c main.o
 
 .debug_macinfo
  *(.debug_macinfo)
@@ -479,9 +547,9 @@ END GROUP
 .debug_pubtypes
  *(.debug_pubtypes)
 
-.debug_ranges   0x00000000       0x38
+.debug_ranges   0x00000000       0x98
  *(.debug_ranges)
- .debug_ranges  0x00000000       0x38 main.o
+ .debug_ranges  0x00000000       0x98 main.o
 
 .debug_macro
  *(.debug_macro)

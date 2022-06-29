@@ -16,16 +16,7 @@ int main(void)
 	sei();
 	
     while (1) 
-    {
-		if (time_counter_board_led_blink < time_ms)
-		{
-			time_counter_board_led_blink = time_ms + 1000;
-			
-			//board_led_status = !board_led_status;
-			//if (board_led_status) PORTD |= 1 << pin_board_led;
-			//else PORTD &= ~(1 << pin_board_led);
-		}
-		
+    {	
 		if (time_counter_buttons < time_ms)
 		{
 			time_counter_buttons = time_ms + 1;
@@ -35,25 +26,64 @@ int main(void)
 			button_tick(&button_red);
 		}
 		
+		if (main_status == MOVING_REVERSE && time_counter_motion_reverse < time_ms)
+		{
+			time_counter_motion_reverse = time_ms + motion_reverse_blink_period;
+			
+			if (reset_led_status) reset_led_off();
+			else reset_led_on();
+		}
 		
+		if (main_status == MOVING_MIX && time_counter_motion_mix < time_ms)
+		{
+			time_counter_motion_mix = time_ms + motion_mix_blink_period;
+			
+			motion_mix_time_counter++;
+			if (motion_mix_time_counter == motion_mix_time_var)
+			{
+				proccess_status(button_on_off_single_click);
+			} else {
+				if (reset_led_status) reset_led_off();
+				else reset_led_on();
+				
+				motion_mix_period_counter++;
+				if (motion_mix_period_counter == motion_mix_period_var)
+				{
+					motion_mix_period_counter = 0;
+					if (motion_status == FORWARD) motion_reverse();
+					else motion_forward();
+				}
+			}
+			
+		}
     }
 }
 
 void init_port()
 {
+	// leds
 	// board led pin
 	DDRD = 1 << pin_board_led;
 	PORTD = 1 << pin_board_led;
 	board_led_status = true;
+	// reset led pin
+	DDRB = 1 << pin_reset_led;
+	// pin on/off led
+	DDRB |= 1 << pin_on_off_led;
 	
 	// buttons
 	// on/off button
-	DDRB = 0;
-	PORTB = 1 << pin_button_on_off;
+	PORTB |= 1 << pin_button_on_off;
 	// reset button
-	PORTB = 1 << pin_button_reset;
+	PORTB |= 1 << pin_button_reset;
 	// red button
 	PORTD |= 1 << pin_button_red;
+	
+	// frequency converter
+	// motion forward pin
+	DDRD |= 1 << pin_motion_forward;
+	// motion reverse pin
+	DDRB |= 1 << pin_motion_reverse;
 }
 
 void init_timers()
@@ -94,36 +124,38 @@ void button_tick(struct buttons *button)
 		case debounce_press:
 			if (past_time >= buttons_debounce_time) 
 			{
-				button->stage = interference;
+				button->stage = interference_press;
 			}
 		break;
 		
-		case interference:
+		case interference_press:
 			if (pin_level == true) // if we catch interference
 			{
 				button->stage = passive; // stop proccess button
+				return;
 			}
 			
 			if (past_time >= (buttons_interference_time + buttons_debounce_time))
 			{
 				button->stage = waiting_release;
 				
-				if (button->type == single_click_press) button->button_callback();
+				if (button->type == single_click_press) button->button_single_click_callback();
 			}
 		break;
 		
 		case waiting_release:
 			if (pin_level == true)
-			{
-				if (button->type == long_click) button->button_callback(); // if button was released before long click called
-				
+			{	
 				button->stage = debounce_release;
+				button->past_stage = waiting_release;
+				button->last_time = button->time_counter;
 				button->time_counter = time_ms;
 			} else if (button->type == long_click) {
 				if (past_time >= button->time_for_long_click) // if time for long click became
 				{
 					button->stage = waiting_release_longclick;
-					button->button_callback();
+					button->past_stage = waiting_release;
+					button->button_long_click_press_callback();
 				}
 			}
 		break;
@@ -132,6 +164,8 @@ void button_tick(struct buttons *button)
 			if (pin_level == true)
 			{	
 				button->stage = debounce_release;
+				button->past_stage = waiting_release_longclick;
+				button->last_time = button->time_counter;
 				button->time_counter = time_ms;
 			}
 		break;
@@ -139,7 +173,23 @@ void button_tick(struct buttons *button)
 		case debounce_release:
 			if (past_time >= buttons_debounce_time)
 			{
+				button->stage = interference_release;
+			}
+		break;
+		
+		case interference_release:
+			if (pin_level == false) // if we catch interference
+			{
+				button->time_counter = button->last_time;
+				button->stage = button->past_stage;
+				return;
+			}
+		
+			if (past_time >= (buttons_interference_time + buttons_debounce_time))
+			{
 				button->stage = passive;
+				if (button->type == long_click && button->past_stage == waiting_release) button->button_single_click_callback(); // if button was released before long click called
+				if (button->type == long_click && button->past_stage == waiting_release_longclick) button->button_long_click_release_callback();
 			}
 		break;
 	}
@@ -150,4 +200,181 @@ void button_on_off_callback()
 	board_led_status = !board_led_status;
 	if (board_led_status) PORTD |= 1 << pin_board_led;
 	else PORTD &= ~(1 << pin_board_led);
+}
+
+// moving forward
+void motion_forward()
+{
+	motion_status = FORWARD;
+	PORTD |= 1 << pin_motion_forward;
+	PORTB &= ~(1 << pin_motion_reverse);
+	// turn on on/off led
+	PORTB |= 1 << pin_on_off_led;
+}
+
+// moving reverse
+void motion_reverse()
+{
+	motion_status = REVERSE;
+	PORTB |= 1 << pin_motion_reverse;
+	PORTD &= ~(1 << pin_motion_forward);
+}
+
+// don't moving
+void motion_off()
+{
+	motion_status = STOP;
+	PORTD &= ~(1 << pin_motion_forward);
+	PORTB &= ~(1 << pin_motion_reverse);
+	// turn off on/off led
+	PORTB &= ~(1 << pin_on_off_led);
+}
+
+// status proccessing
+void proccess_status(uint8_t button_t)
+{
+	switch (main_status)
+	{
+		case MAIN_STOP:
+		if (button_t == button_on_off_single_click)
+		{
+			main_status = MOVING_FORWARD;
+			motion_forward();
+		} else if (button_t == button_reset_single_click)
+		{
+			
+		} else if (button_t == button_reset_long_press_click)
+		{
+			
+		}
+		break;
+		
+		case MOVING_FORWARD:
+		if (button_t == button_on_off_single_click)
+		{
+			main_status = MAIN_STOP;
+			motion_off();
+			reset_led_off();
+		} else if (button_t == button_reset_single_click)
+		{
+			main_status = MOVING_REVERSE;
+			motion_reverse();
+			time_counter_motion_reverse = time_ms + motion_reverse_blink_period;
+			reset_led_on();
+		} else if (button_t == button_reset_long_press_click)
+		{
+			main_status = MOVING_MIX;
+			motion_mix_period_counter = 0;
+			motion_mix_time_counter = 0;
+			test_timer2 = time_ms;
+			motion_reverse();
+			time_counter_motion_mix = time_ms + motion_mix_blink_period;
+			reset_led_on();
+		}
+		break;
+		
+		case MOVING_REVERSE:
+		if (button_t == button_on_off_single_click)
+		{
+			main_status = MAIN_STOP;
+			motion_off();
+			reset_led_off();
+		} else if (button_t == button_reset_single_click)
+		{
+			main_status = MOVING_FORWARD;
+			motion_forward();
+			reset_led_off();
+		} else if (button_t == button_reset_long_press_click)
+		{
+			main_status = MOVING_MIX;
+			motion_mix_period_counter = 0;
+			motion_mix_time_counter = 0;
+			motion_forward();
+			time_counter_motion_mix = time_ms + motion_mix_blink_period;
+		}
+		break;
+		
+		case MOVING_MIX:
+		if (button_t == button_on_off_single_click)
+		{
+			main_status = MOVING_FORWARD;
+			motion_forward();
+			reset_led_off();
+		} else if (button_t == button_reset_single_click)
+		{
+			main_status = MOVING_FORWARD;
+			motion_forward();
+			reset_led_off();
+		} else if (button_t == button_reset_long_press_click)
+		{
+			motion_mix_period_counter = 0;
+			motion_mix_time_counter = 0;
+			time_counter_motion_mix = time_ms + motion_mix_blink_period;
+		}
+		break;
+		
+		case RED_BUTTON_PRESSING:
+
+		break;
+		
+		case RED_BUTTON_RELEASED:
+		if (button_t == button_reset_single_click)
+		{
+			main_status = MAIN_STOP;
+			reset_led_off();
+		}
+		break;	
+	}
+	
+	if (button_t == button_red_long_press_click)
+	{
+		main_status = RED_BUTTON_PRESSING;
+		motion_off();
+		reset_led_on();
+	} else if (button_t == button_red_long_release_click)
+	{
+		main_status = RED_BUTTON_RELEASED;
+	}
+}
+
+void button_on_off_single_click_callback()
+{
+	proccess_status(button_on_off_single_click);
+}
+
+void button_reset_single_click_callback()
+{
+	proccess_status(button_reset_single_click);
+}
+
+void button_reset_long_press_click_callback()
+{
+	proccess_status(button_reset_long_press_click);
+}
+
+void button_red_long_press_click_callback()
+{
+	proccess_status(button_red_long_press_click);
+}
+
+void button_red_long_release_click_callback()
+{
+	proccess_status(button_red_long_release_click);
+}
+
+void reset_led_on()
+{
+	PORTB |= 1 << pin_reset_led;
+	reset_led_status = true;
+}
+
+void reset_led_off()
+{
+	PORTB &= ~(1 << pin_reset_led);
+	reset_led_status = false;
+}
+
+void null_function()
+{
+	
 }
