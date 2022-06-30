@@ -11,6 +11,19 @@
 
 #include <stdbool.h>
 
+// config
+#define buttons_debounce_time 15
+#define buttons_interference_time 100
+#define motion_reverse_blink_period 700 // period for led blinking in reverse motion
+#define motion_mix_time 60000 // max time for mix motion
+#define motion_mix_period 3000 // period for changing between forward and reverse in mix motion
+#define motion_mix_period_hysteresis 2500 // time for smooth shift between forward and reverse motion
+#define motion_mix_blink_period 350 // blink period in mix motion
+#define motion_mix_blink_hysteresis 300 // time for smooth shift between on and off led
+
+// functions
+void init_port();
+void init_timers();
 void button_on_off_callback();
 void motion_forward();
 void motion_reverse();
@@ -24,14 +37,6 @@ void reset_led_on();
 void reset_led_off();
 void null_function();
 void proccess_status(uint8_t button_t);
-
-// config
-#define buttons_debounce_time 15
-#define buttons_interference_time 100
-#define motion_reverse_blink_period 700
-#define motion_mix_blink_period 350
-#define motion_mix_time 60000
-#define motion_mix_period 3000 
 
 // pins
 // leds
@@ -61,7 +66,9 @@ uint32_t time_ms = 0;
 uint32_t time_counter_board_led_blink = 0;
 uint32_t time_counter_buttons = 0;
 uint32_t time_counter_motion_reverse = 0;
-uint32_t time_counter_motion_mix = 0;
+uint32_t time_counter_motion_mix_blink = 0;
+uint32_t time_counter_motion_mix_direction = 0;
+uint32_t time_counter_motion_mix_time = 0;
 enum motion_statuses {
 	STOP = 0,
 	FORWARD = 1,
@@ -69,20 +76,12 @@ enum motion_statuses {
 };
 uint8_t motion_status = STOP;
 bool reset_led_status = false;
-uint8_t motion_mix_period_counter = 0;
-uint8_t motion_mix_time_counter = 0;
-uint8_t motion_mix_period_var = motion_mix_period / motion_mix_blink_period;
-uint8_t motion_mix_time_var = motion_mix_time / motion_mix_blink_period;
-uint32_t test_timer1 = 0;
-uint32_t test_timer2 = 0;
-
 
 // enums
 enum button_types {
 	single_click_press = 0,
 	single_click_release = 1,
-	long_click = 2,
-
+	long_click = 2
 };
 enum button_stages {
 	passive = 0,
@@ -100,7 +99,6 @@ enum button_name {
 	button_red_long_press_click,
 	button_red_long_release_click
 };
-
 
 // structures
 struct buttons 
@@ -154,13 +152,6 @@ struct buttons button_red = {
 	button_red_long_release_click_callback
 };
 
-// functions
-void init_port();
-void init_timers();
 void button_tick(struct buttons *button);
-
-
-
-
 
 #endif /* SACUMI_MELANJOR_ATTINY2313_H_ */

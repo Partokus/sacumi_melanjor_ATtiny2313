@@ -34,27 +34,28 @@ int main(void)
 			else reset_led_on();
 		}
 		
-		if (main_status == MOVING_MIX && time_counter_motion_mix < time_ms)
+		if (main_status == MOVING_MIX)
 		{
-			time_counter_motion_mix = time_ms + motion_mix_blink_period;
-			
-			motion_mix_time_counter++;
-			if (motion_mix_time_counter == motion_mix_time_var)
+			if (time_counter_motion_mix_time < time_ms) // if time for mix rotation end up
 			{
-				proccess_status(button_on_off_single_click);
-			} else {
-				if (reset_led_status) reset_led_off();
-				else reset_led_on();
-				
-				motion_mix_period_counter++;
-				if (motion_mix_period_counter == motion_mix_period_var)
+				proccess_status(button_on_off_single_click); // stop mix rotation and go to status MOVING_FORWARD
+			} else { 
+				if (time_counter_motion_mix_blink < time_ms && ((time_ms - time_counter_motion_mix_time) > motion_mix_blink_hysteresis)) // blink led
 				{
-					motion_mix_period_counter = 0;
+					time_counter_motion_mix_blink = time_ms + motion_mix_blink_period;
+					
+					if (reset_led_status) reset_led_off();
+					else reset_led_on();
+				}
+				
+				if (time_counter_motion_mix_direction < time_ms  && ((time_ms - time_counter_motion_mix_time) > motion_mix_period_hysteresis)) // change direction
+				{
+					time_counter_motion_mix_direction = time_ms + motion_mix_period;
+					
 					if (motion_status == FORWARD) motion_reverse();
 					else motion_forward();
 				}
 			}
-			
 		}
     }
 }
@@ -264,11 +265,11 @@ void proccess_status(uint8_t button_t)
 		} else if (button_t == button_reset_long_press_click)
 		{
 			main_status = MOVING_MIX;
-			motion_mix_period_counter = 0;
-			motion_mix_time_counter = 0;
-			test_timer2 = time_ms;
 			motion_reverse();
-			time_counter_motion_mix = time_ms + motion_mix_blink_period;
+			// start timers
+			time_counter_motion_mix_blink = time_ms + motion_mix_blink_period;
+			time_counter_motion_mix_direction = time_ms + motion_mix_period;
+			time_counter_motion_mix_time = time_ms + motion_mix_time;
 			reset_led_on();
 		}
 		break;
@@ -287,10 +288,11 @@ void proccess_status(uint8_t button_t)
 		} else if (button_t == button_reset_long_press_click)
 		{
 			main_status = MOVING_MIX;
-			motion_mix_period_counter = 0;
-			motion_mix_time_counter = 0;
 			motion_forward();
-			time_counter_motion_mix = time_ms + motion_mix_blink_period;
+			// start timers
+			time_counter_motion_mix_blink = time_ms + motion_mix_blink_period;
+			time_counter_motion_mix_direction = time_ms + motion_mix_period;
+			time_counter_motion_mix_time = time_ms + motion_mix_time;
 		}
 		break;
 		
@@ -307,9 +309,8 @@ void proccess_status(uint8_t button_t)
 			reset_led_off();
 		} else if (button_t == button_reset_long_press_click)
 		{
-			motion_mix_period_counter = 0;
-			motion_mix_time_counter = 0;
-			time_counter_motion_mix = time_ms + motion_mix_blink_period;
+			// restart timer
+			time_counter_motion_mix_time = time_ms + motion_mix_time;
 		}
 		break;
 		
